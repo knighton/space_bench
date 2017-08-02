@@ -17,6 +17,7 @@ import pdb
 
 # we import * so that the symbol X can be accessed as faiss.X
 
+"""
 try:
     from .swigfaiss_gpu import *
 except ImportError as e:
@@ -25,6 +26,8 @@ except ImportError as e:
         sys.stderr.write("Failed to load GPU Faiss: %s\n" % e.args[0])
         sys.stderr.write("Faiss falling back to CPU-only.\n")
     from .swigfaiss import *
+"""
+from .swigfaiss import *
 
 
 ##################################################################
