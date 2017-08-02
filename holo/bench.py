@@ -48,10 +48,6 @@ def evaluate(pred_ids, pred_dists, true_ids, true_dists):
         top_20_in_50 = len(set(pred_ids[i][:20]) & set(true_ids[i][:50])) / 20.
         top_20_in_100 = len(set(pred_ids[i][:20]) &
                             set(true_ids[i][:100])) / 20.
-        top_100_in_100 = len(set(pred_ids[i][:100]) &
-                             set(true_ids[i][:100])) / 100.
-        top_100_in_1000 = len(set(pred_ids[i][:100]) &
-                              set(true_ids[i][:1000])) / 100.
         top_5_in_5s.append(top_5_in_5)
         top_5_in_10s.append(top_5_in_10)
         top_5_in_20s.append(top_5_in_20)
@@ -60,8 +56,6 @@ def evaluate(pred_ids, pred_dists, true_ids, true_dists):
         top_20_in_20s.append(top_20_in_20)
         top_20_in_50s.append(top_20_in_50)
         top_20_in_100s.append(top_20_in_100)
-        top_100_in_100s.append(top_100_in_100s)
-        top_100_in_1000s.append(top_100_in_1000s)
     top_5_in_5 = np.array(top_5_in_5s)
     top_5_in_10 = np.array(top_5_in_10s)
     top_5_in_20 = np.array(top_5_in_20s)
@@ -70,8 +64,6 @@ def evaluate(pred_ids, pred_dists, true_ids, true_dists):
     top_20_in_20 = np.array(top_20_in_20s)
     top_20_in_50 = np.array(top_20_in_50s)
     top_20_in_100 = np.array(top_20_in_100s)
-    top_100_in_100 = np.array(top_100_in_100s)
-    top_100_in_1000 = np.array(top_100_in_1000s)
     return {
         '5_5_mean': top_5_in_5.mean(),
         '5_5_std': top_5_in_5.std(),
@@ -89,10 +81,6 @@ def evaluate(pred_ids, pred_dists, true_ids, true_dists):
         '20_50_std': top_20_in_50.std(),
         '20_100_mean': top_20_in_100.mean(),
         '20_100_std': top_20_in_100.std(),
-        '100_100_mean': top_100_in_100.mean(),
-        '100_100_std': top_100_in_100.std(),
-        '100_1000_mean': top_100_in_1000.mean(),
-        '100_1000_std': top_100_in_1000.std(),
     }
 
 
@@ -130,7 +118,8 @@ def main():
         ('annoy', {'k': 8}),
         ('annoy', {'k': 16}),
         ('annoy', {'k': 32}),
-        #('annoy', {'k': 64}),
+        ('annoy', {'k': 64}),
+        ('annoy', {'k': 128}),
         ('nmslib', None),
     ]
 
