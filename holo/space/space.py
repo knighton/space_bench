@@ -7,9 +7,6 @@ class Space(object):
         self.ids = deepcopy(ids)
         self.vectors = deepcopy(vectors)
 
-    def ids_from_indexes(self, indexes):
-        return list(map(lambda index: self.ids[index], indexes))
-
     def get_nearest(self, vector, limit):
         """
         vector, limit -> ids, dists
