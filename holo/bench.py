@@ -27,9 +27,45 @@ def load():
     return vectors
 
 
+def evaluate(pred_ids, pred_dists, true_ids, true_dists):
+    top_5 = []
+    top_10 = []
+    top_20 = []
+    top_100 = []
+    top_1000 = []
+    for i in range(len(pred_ids)):
+        sub_top_5 = len(set(pred_ids[i][:5]) & set(true_ids[i][:5]))
+        sub_top_10 = len(set(pred_ids[i][:10]) & set(true_ids[i][:10]))
+        sub_top_20 = len(set(pred_ids[i][:20]) & set(true_ids[i][:20]))
+        sub_top_100 = len(set(pred_ids[i][:100]) & set(true_ids[i][:100]))
+        sub_top_1000 = len(set(pred_ids[i][:1000]) & set(true_ids[i][:1000]))
+        top_5.append(sub_top_5 / 5.)
+        top_10.append(sub_top_10 / 10.)
+        top_20.append(sub_top_20 / 20.)
+        top_100.append(sub_top_100 / 100.)
+        top_1000.append(sub_top_1000 / 1000.)
+    top_5 = np.array(top_5)
+    top_10 = np.array(top_10)
+    top_20 = np.array(top_20)
+    top_100 = np.array(top_100)
+    top_1000 = np.array(top_1000)
+    return {
+        'top_5_mean': top_5.mean(),
+        'top_5_std': top_5.std(),
+        'top_10_mean': top_10.mean(),
+        'top_10_std': top_10.std(),
+        'top_20_mean': top_20.mean(),
+        'top_20_std': top_20.std(),
+        'top_100_mean': top_100.mean(),
+        'top_100_std': top_100.std(),
+        'top_1000_mean': top_1000.mean(),
+        'top_1000_std': top_1000.std(),
+    }
+
+
 def main():
     num_queries = 1000
-    results_per_query = 100
+    limit = 100
 
     vectors = load()
 
@@ -54,6 +90,9 @@ def main():
         ('nmslib', None),
     ]
 
+    faiss = get('faiss')(ids, vectors)
+    true_ids, true_dists = faiss.batch_get_nearest(selected_vectors, limit)
+
     for name, kwargs in names_kwargss:
         if kwargs is None:
             kwargs = {}
@@ -64,14 +103,17 @@ def main():
         construct_time = time() - t0
 
         t0 = time()
-        space.batch_get_nearest(selected_vectors, results_per_query)
+        pred_ids, pred_dists = space.batch_get_nearest(selected_vectors, limit)
         lookup_time = time() - t0
+
+        acc = evaluate(pred_ids, pred_dists, true_ids, true_dists)
 
         d = {
             'name': name,
             'kwargs': kwargs,
             'construct_time': construct_time,
             'lookup_time': lookup_time,
+            'accuracy': acc,
         }
         print(json.dumps(d, indent=4, sort_keys=True))
 
