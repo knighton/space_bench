@@ -131,7 +131,7 @@ def main():
     for pretty, class_name, kwargs in names_kwargss:
         if kwargs is None:
             kwargs = {}
-        sys.stdout.write(pretty)
+        sys.stdout.write('%s...' % pretty)
         sys.stdout.flush()
 
         t0 = time()
@@ -152,11 +152,11 @@ def main():
             'search_time': search_time,
             'accuracy': acc,
         }
-        line = json.dumps(d, sort_keys=True)
+        line = json.dumps(d, sort_keys=True) + '\n'
         out.write(line.encode('utf-8'))
         out.flush()
 
-        sys.stdout.write(' -> build %.3fs, search %.3fs, acc 5/100 mean=%.3f '
+        sys.stdout.write(' build %.3fs, search %.3fs, acc 5/100 mean=%.3f '
                          'std=%.3f\n' % (construct_time, search_time,
                          acc['5_100_mean'], acc['5_100_std']))
 
