@@ -86,7 +86,7 @@ def evaluate(pred_ids, pred_dists, true_ids, true_dists):
 
 def main():
     f = 'data/vectors.npy'
-    num_queries = 1000
+    num_queries = 10000
     limit = 100
     out = 'data/out.txt'
 
@@ -102,40 +102,40 @@ def main():
 
     names_kwargss = [
         # ('brute', None),
-        ('brute_faiss', None),
-        ('lsh_faiss', {'nbits': 1}),
-        ('lsh_faiss', {'nbits': 2}),
-        ('lsh_faiss', {'nbits': 4}),
-        ('lsh_faiss', {'nbits': 8}),
-        ('lsh_faiss', {'nbits': 16}),
-        ('lsh_faiss', {'nbits': 32}),
-        ('lsh_faiss', {'nbits': 64}),
-        ('lsh_faiss', {'nbits': 128}),
-        ('lsh_faiss', {'nbits': 256}),
-        ('lsh_faiss', {'nbits': 512}),
-        ('lsh_faiss', {'nbits': 1024}),
-        ('annoy', {'k': 1}),
-        ('annoy', {'k': 2}),
-        ('annoy', {'k': 4}),
-        ('annoy', {'k': 8}),
-        ('annoy', {'k': 16}),
-        ('annoy', {'k': 32}),
-        ('annoy', {'k': 64}),
-        ('annoy', {'k': 128}),
-        ('nmslib', None),
+        ('Faiss (Brute Force)', 'brute_faiss', None),
+        ('Faiss (LSH @ 1 bit)', 'lsh_faiss', {'nbits': 1}),
+        ('Faiss (LSH @ 2 bits)', 'lsh_faiss', {'nbits': 2}),
+        ('Faiss (LSH @ 4 bits)', 'lsh_faiss', {'nbits': 4}),
+        ('Faiss (LSH @ 8 bits)', 'lsh_faiss', {'nbits': 8}),
+        ('Faiss (LSH @ 16 bits)', 'lsh_faiss', {'nbits': 16}),
+        ('Faiss (LSH @ 32 bits)', 'lsh_faiss', {'nbits': 32}),
+        ('Faiss (LSH @ 64 bits)', 'lsh_faiss', {'nbits': 64}),
+        ('Faiss (LSH @ 128 bits)', 'lsh_faiss', {'nbits': 128}),
+        ('Faiss (LSH @ 256 bits)', 'lsh_faiss', {'nbits': 256}),
+        ('Faiss (LSH @ 512 bits)', 'lsh_faiss', {'nbits': 512}),
+        ('Faiss (LSH @ 1024 bits)', 'lsh_faiss', {'nbits': 1024}),
+        ('Annoy (1 tree)', 'annoy', {'k': 1}),
+        ('Annoy (2 trees)', 'annoy', {'k': 2}),
+        ('Annoy (4 trees)', 'annoy', {'k': 4}),
+        ('Annoy (8 trees)', 'annoy', {'k': 8}),
+        ('Annoy (16 trees)', 'annoy', {'k': 16}),
+        ('Annoy (32 trees)', 'annoy', {'k': 32}),
+        ('Annoy (64 trees)', 'annoy', {'k': 64}),
+        ('NMSLib', 'nmslib', None),
     ]
 
     faiss = get('brute_faiss')(ids, vectors)
     true_ids, true_dists = faiss.batch_get_nearest(selected_vectors, limit)
 
     out = open(out, 'wb')
-    for name, kwargs in names_kwargss:
+    for pretty, class_name, kwargs in names_kwargss:
         if kwargs is None:
             kwargs = {}
-        sys.stdout.write('%s with %s' % (name, kwargs))
+        sys.stdout.write(pretty)
+        sys.stdout.flush()
 
         t0 = time()
-        space = get(name)(ids, vectors, **kwargs)
+        space = get(class_name)(ids, vectors, **kwargs)
         construct_time = time() - t0
 
         t0 = time()
@@ -145,7 +145,8 @@ def main():
         acc = evaluate(pred_ids, pred_dists, true_ids, true_dists)
 
         d = {
-            'name': name,
+            'pretty': pretty,
+            'class_name': class_name,
             'kwargs': kwargs,
             'construct_time': construct_time,
             'search_time': search_time,
