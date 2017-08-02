@@ -79,7 +79,18 @@ def main():
 
     names_kwargss = [
         # ('brute', None),
-        ('faiss', None),
+        ('brute_faiss', None),
+        ('lsh_faiss', {'nbits': 1}),
+        ('lsh_faiss', {'nbits': 2}),
+        ('lsh_faiss', {'nbits': 4}),
+        ('lsh_faiss', {'nbits': 8}),
+        ('lsh_faiss', {'nbits': 16}),
+        ('lsh_faiss', {'nbits': 32}),
+        ('lsh_faiss', {'nbits': 64}),
+        ('lsh_faiss', {'nbits': 128}),
+        ('lsh_faiss', {'nbits': 256}),
+        ('lsh_faiss', {'nbits': 512}),
+        ('lsh_faiss', {'nbits': 1024}),
         ('annoy', {'k': 1}),
         ('annoy', {'k': 2}),
         ('annoy', {'k': 4}),
@@ -90,7 +101,7 @@ def main():
         ('nmslib', None),
     ]
 
-    faiss = get('faiss')(ids, vectors)
+    faiss = get('brute_faiss')(ids, vectors)
     true_ids, true_dists = faiss.batch_get_nearest(selected_vectors, limit)
 
     for name, kwargs in names_kwargss:

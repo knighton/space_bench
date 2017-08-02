@@ -2,17 +2,10 @@ import numpy as np
 from wurlitzer import pipes
 
 from ..space import Space
-from .faiss import IndexFlatL2
+from .faiss import IndexFlatL2, IndexLSH
 
 
 class FaissSpace(Space):
-    name = 'faiss'
-
-    def __init__(self, ids, vectors):
-        super().__init__(ids, vectors)
-        self.index = IndexFlatL2(vectors.shape[1])
-        self.index.add(vectors)
-
     def get_nearest(self, vector, limit):
         vectors = np.expand_dims(vector, 0)
         dist_matrix, index_matrix = self.index.search(vectors, limit)
@@ -27,3 +20,21 @@ class FaissSpace(Space):
                 index = index_matrix[i, j]
                 index_matrix[i, j] = self.ids[index]
         return index_matrix, dist_matrix
+
+
+class BruteFaissSpace(FaissSpace):
+    name = 'brute_faiss'
+
+    def __init__(self, ids, vectors):
+        super().__init__(ids, vectors)
+        self.index = IndexFlatL2(vectors.shape[1])
+        self.index.add(vectors)
+
+
+class LSHFaissSpace(FaissSpace):
+    name = 'lsh_faiss'
+
+    def __init__(self, ids, vectors, nbits=64):
+        super().__init__(ids, vectors)
+        self.index = IndexLSH(vectors.shape[1], nbits)
+        self.index.add(vectors)
