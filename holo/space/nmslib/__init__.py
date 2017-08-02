@@ -11,12 +11,13 @@ with pipes(stdout=None):
 class NMSLibSpace(Space):
     name = 'nmslib'
 
-    def __init__(self, ids, vectors):
+    def __init__(self, ids, vectors, post=0, m=16):
         super().__init__(ids, vectors)
         with pipes(stdout=None):
             self.index = nmslib.init(method='hnsw', space='cosinesimil')
             self.index.addDataPointBatch(vectors)
-            self.index.createIndex({'post': 2}, print_progress=False)
+            self.index.createIndex({'post': post, 'M': m},
+                                   print_progress=False)
 
     def get_nearest(self, vector, limit):
         indexes, dists = self.index.knnQuery(vector, limit)

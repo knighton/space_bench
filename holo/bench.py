@@ -101,8 +101,7 @@ def main():
         selected_vectors.append(vectors[index])
     selected_vectors = np.array(selected_vectors)
 
-    names_kwargss = [
-        # ('brute', None),
+    faiss_trials = [
         ('Faiss (Brute Force)', 'brute_faiss', None),
         ('Faiss (LSH @ 1 bit)', 'lsh_faiss', {'nbits': 1}),
         ('Faiss (LSH @ 2 bits)', 'lsh_faiss', {'nbits': 2}),
@@ -115,6 +114,20 @@ def main():
         ('Faiss (LSH @ 256 bits)', 'lsh_faiss', {'nbits': 256}),
         ('Faiss (LSH @ 512 bits)', 'lsh_faiss', {'nbits': 512}),
         ('Faiss (LSH @ 1024 bits)', 'lsh_faiss', {'nbits': 1024}),
+    ]
+
+    nmslib_trials = [
+        ('NMSLib (M = 2)', 'nmslib', {'m': 2}),
+        ('NMSLib (M = 4)', 'nmslib', {'m': 4}),
+        ('NMSLib (M = 8)', 'nmslib', {'m': 8}),
+        ('NMSLib (M = 16)', 'nmslib', {'m': 16}),
+        ('NMSLib (M = 32)', 'nmslib', {'m': 32}),
+        ('NMSLib (M = 64)', 'nmslib', {'m': 64}),
+        ('NMSLib (M = 128)', 'nmslib', {'m': 128}),
+        ('NMSLib', 'nmslib', None),
+    ]
+
+    annoy_trials = [
         ('Annoy (1 tree)', 'annoy', {'k': 1}),
         ('Annoy (2 trees)', 'annoy', {'k': 2}),
         ('Annoy (4 trees)', 'annoy', {'k': 4}),
@@ -122,14 +135,15 @@ def main():
         ('Annoy (16 trees)', 'annoy', {'k': 16}),
         ('Annoy (32 trees)', 'annoy', {'k': 32}),
         ('Annoy (64 trees)', 'annoy', {'k': 64}),
-        ('NMSLib', 'nmslib', None),
     ]
+
+    trials = faiss_trials + nmslib_trials + annoy_trials
 
     faiss = get('brute_faiss')(ids, vectors)
     true_ids, true_dists = faiss.batch_get_nearest(selected_vectors, limit)
 
     out = open(out, 'wb')
-    for pretty, class_name, kwargs in names_kwargss:
+    for pretty, class_name, kwargs in trials:
         if kwargs is None:
             kwargs = {}
         sys.stdout.write('%s...' % pretty)
@@ -157,9 +171,9 @@ def main():
         out.write(line.encode('utf-8'))
         out.flush()
 
-        sys.stdout.write(' build %.3fs, search %.3fs, acc 5/100 mean=%.3f '
-                         'std=%.3f\n' % (construct_time, search_time,
-                         acc['5_100_mean'], acc['5_100_std']))
+        sys.stdout.write(' build %.3fs, search %.3fs, acc 5/10 %.3f, acc '
+                         '5/100 %.3f\n' % (construct_time, search_time,
+                         acc['5_10_mean'], acc['5_100_mean']))
 
 
 if __name__ == '__main__':
