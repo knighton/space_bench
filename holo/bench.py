@@ -1,12 +1,12 @@
 import json
 import numpy as np
+import sys
 from time import time
 
 from .space import get
 
 
-def load():
-    f = 'data/vectors.npy'
+def load(f):
     t0 = time()
     vectors = np.load(f)
     t = time() - t0
@@ -85,10 +85,12 @@ def evaluate(pred_ids, pred_dists, true_ids, true_dists):
 
 
 def main():
+    f = 'data/vectors.npy'
     num_queries = 1000
     limit = 100
+    out = 'data/out.txt'
 
-    vectors = load()
+    vectors = load(f)
 
     ids = np.arange(len(vectors))
 
@@ -126,10 +128,11 @@ def main():
     faiss = get('brute_faiss')(ids, vectors)
     true_ids, true_dists = faiss.batch_get_nearest(selected_vectors, limit)
 
+    out = open(out, 'wb')
     for name, kwargs in names_kwargss:
         if kwargs is None:
             kwargs = {}
-        print('Evaluating: %s with %s' % (name, kwargs))
+        sys.stdout.write('%s with %s' % (name, kwargs))
 
         t0 = time()
         space = get(name)(ids, vectors, **kwargs)
@@ -137,7 +140,7 @@ def main():
 
         t0 = time()
         pred_ids, pred_dists = space.batch_get_nearest(selected_vectors, limit)
-        lookup_time = time() - t0
+        search_time = time() - t0
 
         acc = evaluate(pred_ids, pred_dists, true_ids, true_dists)
 
@@ -145,10 +148,16 @@ def main():
             'name': name,
             'kwargs': kwargs,
             'construct_time': construct_time,
-            'lookup_time': lookup_time,
+            'search_time': search_time,
             'accuracy': acc,
         }
-        print(json.dumps(d, indent=4, sort_keys=True))
+        line = json.dumps(d, sort_keys=True)
+        out.write(line.encode('utf-8'))
+        out.flush()
+
+        sys.stdout.write(' -> build %.3fs, search %.3fs, acc 5/100 mean=%.3f '
+                         'std=%.3f\n' % (construct_time, search_time,
+                         acc['5_100_mean'], acc['5_100_std']))
 
 
 if __name__ == '__main__':
