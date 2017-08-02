@@ -123,8 +123,6 @@ def main():
         ('NMSLib (M = 16)', 'nmslib', {'m': 16}),
         ('NMSLib (M = 32)', 'nmslib', {'m': 32}),
         ('NMSLib (M = 64)', 'nmslib', {'m': 64}),
-        ('NMSLib (M = 128)', 'nmslib', {'m': 128}),
-        ('NMSLib', 'nmslib', None),
     ]
 
     annoy_trials = [
