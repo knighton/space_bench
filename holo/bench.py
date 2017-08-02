@@ -28,38 +28,71 @@ def load():
 
 
 def evaluate(pred_ids, pred_dists, true_ids, true_dists):
-    top_5 = []
-    top_10 = []
-    top_20 = []
-    top_100 = []
-    top_1000 = []
+    top_5_in_5s = []
+    top_5_in_10s = []
+    top_5_in_20s = []
+    top_5_in_50s = []
+    top_5_in_100s = []
+    top_20_in_20s = []
+    top_20_in_50s = []
+    top_20_in_100s = []
+    top_100_in_100s = []
+    top_100_in_1000s = []
     for i in range(len(pred_ids)):
-        sub_top_5 = len(set(pred_ids[i][:5]) & set(true_ids[i][:5]))
-        sub_top_10 = len(set(pred_ids[i][:10]) & set(true_ids[i][:10]))
-        sub_top_20 = len(set(pred_ids[i][:20]) & set(true_ids[i][:20]))
-        sub_top_100 = len(set(pred_ids[i][:100]) & set(true_ids[i][:100]))
-        sub_top_1000 = len(set(pred_ids[i][:1000]) & set(true_ids[i][:1000]))
-        top_5.append(sub_top_5 / 5.)
-        top_10.append(sub_top_10 / 10.)
-        top_20.append(sub_top_20 / 20.)
-        top_100.append(sub_top_100 / 100.)
-        top_1000.append(sub_top_1000 / 1000.)
-    top_5 = np.array(top_5)
-    top_10 = np.array(top_10)
-    top_20 = np.array(top_20)
-    top_100 = np.array(top_100)
-    top_1000 = np.array(top_1000)
+        top_5_in_5 = len(set(pred_ids[i][:5]) & set(true_ids[i][:5])) / 5.
+        top_5_in_10 = len(set(pred_ids[i][:5]) & set(true_ids[i][:10])) / 5.
+        top_5_in_20 = len(set(pred_ids[i][:5]) & set(true_ids[i][:20])) / 5.
+        top_5_in_50 = len(set(pred_ids[i][:5]) & set(true_ids[i][:50])) / 5.
+        top_5_in_100 = len(set(pred_ids[i][:5]) & set(true_ids[i][:100])) / 5.
+        top_20_in_20 = len(set(pred_ids[i][:20]) & set(true_ids[i][:20])) / 20.
+        top_20_in_50 = len(set(pred_ids[i][:20]) & set(true_ids[i][:50])) / 20.
+        top_20_in_100 = len(set(pred_ids[i][:20]) &
+                            set(true_ids[i][:100])) / 20.
+        top_100_in_100 = len(set(pred_ids[i][:100]) &
+                             set(true_ids[i][:100])) / 100.
+        top_100_in_1000 = len(set(pred_ids[i][:100]) &
+                              set(true_ids[i][:1000])) / 100.
+        top_5_in_5s.append(top_5_in_5)
+        top_5_in_10s.append(top_5_in_10)
+        top_5_in_20s.append(top_5_in_20)
+        top_5_in_50s.append(top_5_in_50)
+        top_5_in_100s.append(top_5_in_100)
+        top_20_in_20s.append(top_20_in_20)
+        top_20_in_50s.append(top_20_in_50)
+        top_20_in_100s.append(top_20_in_100)
+        top_100_in_100s.append(top_100_in_100s)
+        top_100_in_1000s.append(top_100_in_1000s)
+    top_5_in_5 = np.array(top_5_in_5s)
+    top_5_in_10 = np.array(top_5_in_10s)
+    top_5_in_20 = np.array(top_5_in_20s)
+    top_5_in_50 = np.array(top_5_in_50s)
+    top_5_in_100 = np.array(top_5_in_100s)
+    top_20_in_20 = np.array(top_20_in_20s)
+    top_20_in_50 = np.array(top_20_in_50s)
+    top_20_in_100 = np.array(top_20_in_100s)
+    top_100_in_100 = np.array(top_100_in_100s)
+    top_100_in_1000 = np.array(top_100_in_1000s)
     return {
-        'top_5_mean': top_5.mean(),
-        'top_5_std': top_5.std(),
-        'top_10_mean': top_10.mean(),
-        'top_10_std': top_10.std(),
-        'top_20_mean': top_20.mean(),
-        'top_20_std': top_20.std(),
-        'top_100_mean': top_100.mean(),
-        'top_100_std': top_100.std(),
-        'top_1000_mean': top_1000.mean(),
-        'top_1000_std': top_1000.std(),
+        '5_5_mean': top_5_in_5.mean(),
+        '5_5_std': top_5_in_5.std(),
+        '5_10_mean': top_5_in_10.mean(),
+        '5_10_std': top_5_in_10.std(),
+        '5_20_mean': top_5_in_20.mean(),
+        '5_20_std': top_5_in_20.std(),
+        '5_50_mean': top_5_in_50.mean(),
+        '5_50_std': top_5_in_50.std(),
+        '5_100_mean': top_5_in_100.mean(),
+        '5_100_std': top_5_in_100.std(),
+        '20_20_mean': top_20_in_20.mean(),
+        '20_20_std': top_20_in_20.std(),
+        '20_50_mean': top_20_in_50.mean(),
+        '20_50_std': top_20_in_50.std(),
+        '20_100_mean': top_20_in_100.mean(),
+        '20_100_std': top_20_in_100.std(),
+        '100_100_mean': top_100_in_100.mean(),
+        '100_100_std': top_100_in_100.std(),
+        '100_1000_mean': top_100_in_1000.mean(),
+        '100_1000_std': top_100_in_1000.std(),
     }
 
 
