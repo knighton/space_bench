@@ -2,6 +2,7 @@ import json
 import numpy as np
 import sys
 from time import time
+import ujson as json
 
 from .space import get
 
@@ -152,7 +153,7 @@ def main():
             'search_time': search_time,
             'accuracy': acc,
         }
-        line = json.dumps(d, sort_keys=True) + '\n'
+        line = json.dumps(d, sort_keys=True, double_precision=4) + '\n'
         out.write(line.encode('utf-8'))
         out.flush()
 
