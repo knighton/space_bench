@@ -103,8 +103,6 @@ def main():
 
     faiss_trials = [
         ('Faiss (Brute Force)', 'brute_faiss', None),
-        ('Faiss (LSH @ 8 bits)', 'lsh_faiss', {'nbits': 8}),
-        ('Faiss (LSH @ 16 bits)', 'lsh_faiss', {'nbits': 16}),
         ('Faiss (LSH @ 32 bits)', 'lsh_faiss', {'nbits': 32}),
         ('Faiss (LSH @ 64 bits)', 'lsh_faiss', {'nbits': 64}),
         ('Faiss (LSH @ 128 bits)', 'lsh_faiss', {'nbits': 128}),
