@@ -103,9 +103,6 @@ def main():
 
     faiss_trials = [
         ('Faiss (Brute Force)', 'brute_faiss', None),
-        ('Faiss (LSH @ 1 bit)', 'lsh_faiss', {'nbits': 1}),
-        ('Faiss (LSH @ 2 bits)', 'lsh_faiss', {'nbits': 2}),
-        ('Faiss (LSH @ 4 bits)', 'lsh_faiss', {'nbits': 4}),
         ('Faiss (LSH @ 8 bits)', 'lsh_faiss', {'nbits': 8}),
         ('Faiss (LSH @ 16 bits)', 'lsh_faiss', {'nbits': 16}),
         ('Faiss (LSH @ 32 bits)', 'lsh_faiss', {'nbits': 32}),
@@ -114,6 +111,7 @@ def main():
         ('Faiss (LSH @ 256 bits)', 'lsh_faiss', {'nbits': 256}),
         ('Faiss (LSH @ 512 bits)', 'lsh_faiss', {'nbits': 512}),
         ('Faiss (LSH @ 1024 bits)', 'lsh_faiss', {'nbits': 1024}),
+        ('Faiss (LSH @ 2048 bits)', 'lsh_faiss', {'nbits': 2048}),
     ]
 
     nmslib_trials = [
@@ -132,7 +130,6 @@ def main():
         ('Annoy (8 trees)', 'annoy', {'k': 8}),
         ('Annoy (16 trees)', 'annoy', {'k': 16}),
         ('Annoy (32 trees)', 'annoy', {'k': 32}),
-        ('Annoy (64 trees)', 'annoy', {'k': 64}),
     ]
 
     trials = faiss_trials + nmslib_trials + annoy_trials
