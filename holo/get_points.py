@@ -17,16 +17,49 @@ def main():
         time = x['search_time']
         class2prettys_times_accs[class_name].append((pretty, time, acc))
 
+    name2dark = {
+        'annoy': '#08f',
+        'nmslib': '#f80',
+        'lsh_faiss': '#0b0',
+        'brute_faiss': 'red',
+    }
+
+    name2light = {
+        'annoy': '#ace',
+        'nmslib': '#fb8',
+        'lsh_faiss': '#8f8',
+        'brute_faiss': 'red',
+    }
+
     traces = []
     for class_name in sorted(class2prettys_times_accs):
         prettys_times_accs = class2prettys_times_accs[class_name]
+        xx = []
+        yy = []
+        for pretty, time, acc in prettys_times_accs:
+            xx.append(acc)
+            yy.append(time)
+        color = name2light[class_name]
+        trace = go.Scatter(name=class_name, x=xx, y=yy, mode='lines',
+                           line=dict(color=color))
+        traces.append(trace)
         for pretty, time, acc in prettys_times_accs:
             xx = np.array([acc])
             yy = np.array([time])
-            trace = go.Scatter(name=pretty, x=xx, y=yy, mode='markers')
+            color = name2dark[class_name]
+            trace = go.Scatter(name=pretty, x=xx, y=yy, mode='markers',
+                               line=dict(color=color))
             traces.append(trace)
 
-    offline.plot(traces, filename='out.png')
+    layout = go.Layout(**{
+        'title': 'Accuracy vs Latency Tradeoffs',
+        'xaxis': {'title': 'Accuracy (% of predicted top 5 in the true top '
+                           '20)'},
+        'yaxis': {'title': 'Latency (of 10,000 queries for 100 nearest '
+                           'videos, in seconds)'},
+    })
+    figure = go.Figure(data=traces, layout=layout)
+    offline.plot(figure, filename='data/out.html')
 
 
 if __name__ == '__main__':
