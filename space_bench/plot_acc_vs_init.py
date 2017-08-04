@@ -14,7 +14,7 @@ def main():
         class_name = x['class_name']
         pretty = x['pretty']
         acc = x['accuracy']['5_10_mean']
-        time = x['search_time']
+        time = x['construct_time']
         class2prettys_times_accs[class_name].append((pretty, time, acc))
 
     name2dark = {
@@ -55,14 +55,13 @@ def main():
             traces.append(trace)
 
     layout = go.Layout(**{
-        'title': 'Accuracy vs Search Latency',
+        'title': 'Accuracy vs Index Construction Time',
         'xaxis': {'title': 'Accuracy (% of predicted top 5 in the true top '
                            '10)'},
-        'yaxis': {'title': 'Latency (of 10,000 queries for 100 nearest '
-                           'videos, in seconds)'},
+        'yaxis': {'title': 'Index construction time (seconds)'},
     })
     figure = go.Figure(data=traces, layout=layout)
-    offline.plot(figure, filename='data/acc_vs_latency.html')
+    offline.plot(figure, filename='data/plot_acc_vs_init.html')
 
 
 if __name__ == '__main__':

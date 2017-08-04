@@ -125,7 +125,7 @@ def main():
     f = 'data/vectors.npy'
     num_queries = 10000
     limit = 100
-    out = 'data/out.txt'
+    out = 'data/bench.txt'
 
     vectors = load(f)
 
