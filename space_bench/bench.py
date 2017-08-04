@@ -29,6 +29,12 @@ def load(f):
 
 
 def evaluate(pred_ids, pred_dists, true_ids, true_dists):
+    top_1_in_1s = []
+    top_1_in_5s = []
+    top_1_in_10s = []
+    top_1_in_20s = []
+    top_1_in_50s = []
+    top_1_in_100s = []
     top_5_in_5s = []
     top_5_in_10s = []
     top_5_in_20s = []
@@ -40,6 +46,12 @@ def evaluate(pred_ids, pred_dists, true_ids, true_dists):
     top_100_in_100s = []
     top_100_in_1000s = []
     for i in range(len(pred_ids)):
+        top_1_in_1 = len(set(pred_ids[i][:1]) & set(true_ids[i][:1])) / 1.
+        top_1_in_5 = len(set(pred_ids[i][:1]) & set(true_ids[i][:5])) / 1.
+        top_1_in_10 = len(set(pred_ids[i][:1]) & set(true_ids[i][:10])) / 1.
+        top_1_in_20 = len(set(pred_ids[i][:1]) & set(true_ids[i][:20])) / 1.
+        top_1_in_50 = len(set(pred_ids[i][:1]) & set(true_ids[i][:50])) / 1.
+        top_1_in_100 = len(set(pred_ids[i][:1]) & set(true_ids[i][:100])) / 1.
         top_5_in_5 = len(set(pred_ids[i][:5]) & set(true_ids[i][:5])) / 5.
         top_5_in_10 = len(set(pred_ids[i][:5]) & set(true_ids[i][:10])) / 5.
         top_5_in_20 = len(set(pred_ids[i][:5]) & set(true_ids[i][:20])) / 5.
@@ -49,6 +61,12 @@ def evaluate(pred_ids, pred_dists, true_ids, true_dists):
         top_20_in_50 = len(set(pred_ids[i][:20]) & set(true_ids[i][:50])) / 20.
         top_20_in_100 = len(set(pred_ids[i][:20]) &
                             set(true_ids[i][:100])) / 20.
+        top_1_in_1s.append(top_1_in_1)
+        top_1_in_5s.append(top_1_in_5)
+        top_1_in_10s.append(top_1_in_10)
+        top_1_in_20s.append(top_1_in_20)
+        top_1_in_50s.append(top_1_in_50)
+        top_1_in_100s.append(top_1_in_100)
         top_5_in_5s.append(top_5_in_5)
         top_5_in_10s.append(top_5_in_10)
         top_5_in_20s.append(top_5_in_20)
@@ -57,6 +75,12 @@ def evaluate(pred_ids, pred_dists, true_ids, true_dists):
         top_20_in_20s.append(top_20_in_20)
         top_20_in_50s.append(top_20_in_50)
         top_20_in_100s.append(top_20_in_100)
+    top_1_in_1 = np.array(top_1_in_1s)
+    top_1_in_5 = np.array(top_1_in_5s)
+    top_1_in_10 = np.array(top_1_in_10s)
+    top_1_in_20 = np.array(top_1_in_20s)
+    top_1_in_50 = np.array(top_1_in_50s)
+    top_1_in_100 = np.array(top_1_in_100s)
     top_5_in_5 = np.array(top_5_in_5s)
     top_5_in_10 = np.array(top_5_in_10s)
     top_5_in_20 = np.array(top_5_in_20s)
@@ -66,6 +90,18 @@ def evaluate(pred_ids, pred_dists, true_ids, true_dists):
     top_20_in_50 = np.array(top_20_in_50s)
     top_20_in_100 = np.array(top_20_in_100s)
     return {
+        '1_1_mean': top_1_in_1.mean(),
+        '1_1_std': top_1_in_1.std(),
+        '1_5_mean': top_1_in_5.mean(),
+        '1_5_std': top_1_in_5.std(),
+        '1_10_mean': top_1_in_10.mean(),
+        '1_10_std': top_1_in_10.std(),
+        '1_20_mean': top_1_in_20.mean(),
+        '1_20_std': top_1_in_20.std(),
+        '1_50_mean': top_1_in_50.mean(),
+        '1_50_std': top_1_in_50.std(),
+        '1_100_mean': top_1_in_100.mean(),
+        '1_100_std': top_1_in_100.std(),
         '5_5_mean': top_5_in_5.mean(),
         '5_5_std': top_5_in_5.std(),
         '5_10_mean': top_5_in_10.mean(),
@@ -103,13 +139,13 @@ def main():
 
     faiss_trials = [
         ('Faiss (Brute Force)', 'brute_faiss', None),
-        ('Faiss (LSH @ 32 bits)', 'lsh_faiss', {'nbits': 32}),
-        ('Faiss (LSH @ 64 bits)', 'lsh_faiss', {'nbits': 64}),
         ('Faiss (LSH @ 128 bits)', 'lsh_faiss', {'nbits': 128}),
         ('Faiss (LSH @ 256 bits)', 'lsh_faiss', {'nbits': 256}),
         ('Faiss (LSH @ 512 bits)', 'lsh_faiss', {'nbits': 512}),
         ('Faiss (LSH @ 1024 bits)', 'lsh_faiss', {'nbits': 1024}),
         ('Faiss (LSH @ 2048 bits)', 'lsh_faiss', {'nbits': 2048}),
+        ('Faiss (LSH @ 4096 bits)', 'lsh_faiss', {'nbits': 4096}),
+        ('Faiss (LSH @ 8192 bits)', 'lsh_faiss', {'nbits': 8192}),
     ]
 
     nmslib_trials = [
@@ -119,6 +155,8 @@ def main():
         ('NMSLib (M = 16)', 'nmslib', {'m': 16}),
         ('NMSLib (M = 32)', 'nmslib', {'m': 32}),
         ('NMSLib (M = 64)', 'nmslib', {'m': 64}),
+        #('NMSLib (M = 128)', 'nmslib', {'m': 128}), -- crashes
+        #('NMSLib (M = 256)', 'nmslib', {'m': 256}), -- hangs
     ]
 
     annoy_trials = [

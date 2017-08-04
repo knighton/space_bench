@@ -13,7 +13,7 @@ def main():
         x = json.loads(line)
         class_name = x['class_name']
         pretty = x['pretty']
-        acc = x['accuracy']['5_20_mean']
+        acc = x['accuracy']['5_10_mean']
         time = x['search_time']
         class2prettys_times_accs[class_name].append((pretty, time, acc))
 
@@ -36,6 +36,9 @@ def main():
         prettys_times_accs = class2prettys_times_accs[class_name]
         xx = []
         yy = []
+        if class_name == 'brute_faiss':
+            xx.append(0.)
+            yy.append(prettys_times_accs[0][1])
         for pretty, time, acc in prettys_times_accs:
             xx.append(acc)
             yy.append(time)
@@ -54,7 +57,7 @@ def main():
     layout = go.Layout(**{
         'title': 'Accuracy vs Latency Tradeoffs',
         'xaxis': {'title': 'Accuracy (% of predicted top 5 in the true top '
-                           '20)'},
+                           '10)'},
         'yaxis': {'title': 'Latency (of 10,000 queries for 100 nearest '
                            'videos, in seconds)'},
     })
